@@ -29,7 +29,8 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": ["node_modules/firebase/firebase-auth-compat.js"
+],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
@@ -41,8 +42,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "3MB",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -92,10 +93,14 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/firebase/firebase-auth-compat.js"
+]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "6da0e7d0-a941-40e8-8287-762e61b4d62d"
   }
 }
