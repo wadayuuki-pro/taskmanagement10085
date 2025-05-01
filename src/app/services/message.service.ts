@@ -173,7 +173,7 @@ export class MessageService {
   }
 
   // メンションされたユーザーのメールアドレスを抽出する
-  private async extractMentions(content: string): Promise<{ mentions: string[], formattedContent: string }> {
+  private async extractMentions(content: string, tagId: string): Promise<{ mentions: string[], formattedContent: string }> {
     const mentions: string[] = [];
     const mentionRegex = /@([^\s]+)/g;
     let match;
@@ -217,8 +217,76 @@ export class MessageService {
       }
     }
 
+    // アサインされているユーザーも通知対象に追加
+    if (tagId) {
+      const assignedUsers = await this.getAssignedUsers(tagId);
+      console.log('タグにアサインされているユーザー:', assignedUsers);
+      for (const user of assignedUsers) {
+        if (user.email && !mentions.includes(user.email)) {
+          mentions.push(user.email);
+          console.log('アサインされているユーザーを通知対象に追加:', user.email);
+        }
+      }
+    }
+
     console.log('抽出されたメンション:', mentions);
     return { mentions, formattedContent };
+  }
+
+  private getCurrentTagId(): string | null {
+    // 現在のタグIDを取得するロジックを実装
+    // 例: URLから取得する場合
+    const url = window.location.href;
+    const match = url.match(/\/tags\/([^\/]+)/);
+    return match ? match[1] : null;
+  }
+
+  private async getAssignedUsers(tagId: string): Promise<{ email: string; displayName: string }[]> {
+    try {
+      const tagRef = doc(this.firestore, 'tags', tagId);
+      const tagDoc = await getDoc(tagRef);
+      
+      if (!tagDoc.exists()) {
+        console.log(`タグが見つかりません: ${tagId}`);
+        return [];
+      }
+
+      const tagData = tagDoc.data();
+      if (!tagData) {
+        console.error(`タグデータが空です: ${tagId}`);
+        return [];
+      }
+
+      const assignedUsers = tagData['assignedUsers'] || [];
+      const assignedUserIds = tagData['assignedUserIds'] || [];
+
+      if (assignedUsers.length > 0) {
+        return assignedUsers;
+      } else if (assignedUserIds.length > 0) {
+        const users = await Promise.all(assignedUserIds.map(async (userId: string) => {
+          try {
+            const userDoc = await getDoc(doc(this.firestore, 'users', userId));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              return {
+                email: userData['email'] || userId,
+                displayName: userData['displayName'] || 'ユーザー'
+              };
+            }
+            return null;
+          } catch (error) {
+            console.error(`ユーザー情報の取得に失敗しました: ${userId}`, error);
+            return null;
+          }
+        }));
+        return users.filter(user => user !== null) as { email: string; displayName: string }[];
+      }
+
+      return [];
+    } catch (error) {
+      console.error(`プロジェクトユーザーの取得に失敗しました: ${tagId}`, error);
+      return [];
+    }
   }
 
   // メッセージを送信する
@@ -232,7 +300,7 @@ export class MessageService {
 
     // メンションされたユーザーを抽出（非同期処理を待つ）
     console.log('メンション抽出を開始します');
-    const { mentions, formattedContent } = await this.extractMentions(content);
+    const { mentions, formattedContent } = await this.extractMentions(content, tagId);
     console.log('抽出されたメンション:', mentions);
 
     const message: Omit<Message, 'id'> = {
