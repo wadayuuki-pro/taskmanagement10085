@@ -5,13 +5,14 @@
     コメント数: {{ comments.length }}
   </div>
 
+  <!-- 新規コメント入力フォーム -->
   <div class="comment-form">
     <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="comment-form">
       <div class="form-group">
         <textarea
           #commentTextarea
           formControlName="content"
-          placeholder="コメントを入力してください..."
+          placeholder="新規コメントを入力してください..."
           (keyup)="onKeyUp($event)"
           rows="3"
         ></textarea>
@@ -38,13 +39,23 @@
 
   <!-- 返信フォーム -->
   <div class="reply-form" *ngIf="replyingTo">
+    <div class="reply-header">
+      <span class="reply-to-label">
+        <mat-icon>reply</mat-icon>
+        {{ replyingTo.senderName }}さんへの返信
+      </span>
+      <button mat-icon-button (click)="cancelReply()" class="cancel-reply-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <form [formGroup]="replyForm" (ngSubmit)="onSubmitReply()">
       <div class="form-group">
         <textarea
           #replyTextarea
           formControlName="content"
           placeholder="返信を入力してください..."
-          (keyup)="onReplyInput($event)"
+          (input)="onReplyInput($event)"
+          (keyup)="onKeyUp($event)"
           rows="5"
         ></textarea>
         <div class="mention-suggestions" *ngIf="showMentionSuggestions" [ngStyle]="mentionPosition">
@@ -67,34 +78,77 @@
 
   <!-- コメント一覧 -->
   <div class="comments-list">
-    <div *ngIf="comments.length === 0" class="no-comments">
+    <div *ngIf="commentTree.length === 0" class="no-comments">
       コメントはまだありません
     </div>
-    <div *ngFor="let comment of comments" class="comment" [class.reply-comment]="comment.replyTo">
-      <div class="comment-header">
-        <span class="sender-name">{{ comment.senderName }}</span>
-        <span class="timestamp">{{ comment.createdAt | date:'yyyy/MM/dd HH:mm' }}</span>
-        <button *ngIf="canDeleteComment(comment) && comment.id" 
-                mat-icon-button 
-                color="warn" 
-                (click)="deleteComment(comment.id!)"
-                class="delete-button">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-      <div class="comment-content">
-        <div *ngIf="comment.replyTo" class="reply-indicator">
-          <mat-icon class="reply-icon">reply</mat-icon>
-          <span class="reply-to-name">{{ comment.replyToName }}さんへの返信</span>
+    <ng-container *ngFor="let node of commentTree">
+      <!-- 新規コメント -->
+      <div class="comment" [ngClass]="{'main-comment': !node.comment.replyTo, 'reply-comment': node.comment.replyTo}">
+        <div class="comment-header">
+          <div class="comment-meta">
+            <span class="sender-name">{{ node.comment.senderName }}</span>
+            <span class="timestamp">{{ node.comment.createdAt | date:'yyyy/MM/dd HH:mm' }}</span>
+          </div>
+          <button *ngIf="canDeleteComment(node.comment) && node.comment.id" 
+                  mat-icon-button 
+                  color="warn" 
+                  (click)="deleteComment(node.comment.id!)"
+                  class="delete-button">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
-        <div [innerHTML]="formatMessageContent(comment.content)"></div>
+        <div class="comment-content">
+          <div *ngIf="node.comment.replyTo" class="reply-indicator">
+            <mat-icon class="reply-icon">reply</mat-icon>
+          </div>
+          <div [innerHTML]="formatMessageContent(node.comment.content)"></div>
+        </div>
+        <div class="comment-actions">
+          <button mat-button color="primary" (click)="startReply(node.comment)" class="reply-button" *ngIf="!node.comment.replyTo">
+            <mat-icon>reply</mat-icon>
+            返信
+          </button>
+        </div>
+        
+        <!-- 返信表示セクション -->
+        <div class="replies-section" *ngIf="node.replies.length > 0">
+          <div class="replies-toggle" (click)="toggleReplies(node.comment)">
+            <mat-icon>{{ isRepliesExpanded(node.comment) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <span>{{ node.replies.length }}件の返信</span>
+          </div>
+          <div class="replies-list" *ngIf="isRepliesExpanded(node.comment)">
+            <ng-container *ngFor="let reply of node.replies">
+              <div class="comment reply-comment">
+                <div class="comment-header">
+                  <div class="comment-meta">
+                    <span class="sender-name">{{ reply.senderName }}</span>
+                    <span class="timestamp">{{ reply.createdAt | date:'yyyy/MM/dd HH:mm' }}</span>
+                  </div>
+                  <button *ngIf="canDeleteComment(reply) && reply.id" 
+                          mat-icon-button 
+                          color="warn" 
+                          (click)="deleteComment(reply.id!)"
+                          class="delete-button">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+                <div class="comment-content">
+                  <div class="reply-indicator">
+                    <mat-icon class="reply-icon">reply</mat-icon>
+                  </div>
+                  <div class="reply-content" [innerHTML]="formatMessageContent(reply.content)"></div>
+                </div>
+                <div class="comment-actions">
+                  <button mat-button color="primary" (click)="startReply(reply)" class="reply-button" *ngIf="!reply.replyTo">
+                    <mat-icon>reply</mat-icon>
+                    返信
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
       </div>
-      <div class="comment-actions">
-        <button mat-button color="primary" (click)="startReply(comment)" class="reply-button">
-          <mat-icon>reply</mat-icon>
-          返信
-        </button>
-      </div>
-    </div>
+    </ng-container>
   </div>
 </div> 

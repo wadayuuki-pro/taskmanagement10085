@@ -128,14 +128,61 @@
       background-color: white;
       padding: 1rem;
       border-radius: 4px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e0e0e0;
+
+      &.main-comment {
+        background-color: #ffffff;
+        border-left: 4px solid #2196f3;
+      }
+
+      &.reply-comment {
+        background-color: #f8f9fa;
+        border-left: 2px solid #e0e0e0;
+        margin-left: 1.5rem;
+        padding: 0.75rem;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -1.5rem;
+          top: 0;
+          bottom: 0;
+          width: 1.5rem;
+          border-left: 2px solid #e0e0e0;
+        }
+
+        .reply-indicator {
+          display: flex;
+          align-items: center;
+          color: #2196f3;
+          margin-bottom: 0.25rem;
+          font-size: 0.8rem;
+          padding: 0.15rem 0.35rem;
+          background-color: rgba(33, 150, 243, 0.1);
+          border-radius: 3px;
+          width: fit-content;
+
+          .reply-icon {
+            font-size: 1rem;
+            margin-right: 0.25rem;
+          }
+
+          .reply-to-name {
+            color: #2196f3;
+            font-weight: 500;
+          }
+        }
+      }
 
       .comment-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
 
         .sender-name {
           font-weight: 500;
@@ -143,30 +190,104 @@
         }
 
         .timestamp {
-          font-size: 12px;
+          font-size: 0.75rem;
           color: #666;
-        }
-
-        .delete-button {
-          padding: 0;
-          width: 24px;
-          height: 24px;
-          line-height: 24px;
-          min-width: 24px;
-          
-          ::ng-deep .mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-            line-height: 16px;
-          }
         }
       }
 
-      .content {
+      .comment-content {
         color: #333;
         line-height: 1.5;
         white-space: pre-wrap;
+        margin-bottom: 0.5rem;
+      }
+
+      .comment-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+      }
+    }
+
+    .replies-section {
+      margin-top: 0.25rem;
+      margin-left: 1.5rem;
+      border-left: 2px solid #e0e0e0;
+      padding-left: 0.75rem;
+
+      .replies-toggle {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #666;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 3px;
+        transition: background-color 0.2s;
+        margin-bottom: 0.25rem;
+        font-size: 0.8rem;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .replies-list {
+        .reply-comment {
+          background-color: #f8f9fa;
+          border-radius: 4px;
+          padding: 0.75rem;
+          margin-bottom: 0.5rem;
+          border: 1px solid #e9ecef;
+
+          .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.25rem;
+          }
+
+          .comment-content {
+            .reply-indicator {
+              display: flex;
+              align-items: center;
+              color: #2196f3;
+              margin-bottom: 0.5rem;
+              font-size: 0.9rem;
+              padding: 0.25rem 0.5rem;
+              background-color: rgba(33, 150, 243, 0.1);
+              border-radius: 4px;
+              width: fit-content;
+
+              .reply-icon {
+                font-size: 1.2rem;
+                margin-right: 0.5rem;
+              }
+
+              .reply-to-name {
+                color: #2196f3;
+                font-weight: 500;
+              }
+            }
+
+            .reply-content {
+              color: #495057;
+              padding-left: 0.5rem;
+            }
+          }
+
+          .comment-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+          }
+        }
       }
     }
   }
@@ -179,6 +300,35 @@
   background-color: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e9ecef;
+
+  .reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+
+    .reply-to-label {
+      display: flex;
+      align-items: center;
+      color: #2196f3;
+      font-weight: 500;
+
+      mat-icon {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+      }
+    }
+
+    .cancel-reply-button {
+      color: #6c757d;
+      
+      &:hover {
+        color: #dc3545;
+      }
+    }
+  }
 
   .form-group {
     position: relative;
@@ -239,78 +389,4 @@
       }
     }
   }
-}
-
-.reply-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.reply-to-label {
-  font-weight: 500;
-  color: #2196f3;
-}
-
-.cancel-reply-button {
-  color: #666;
-}
-
-.reply-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.reply-input {
-  width: 100%;
-}
-
-.reply-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-// 返信コメントのスタイル
-.reply-comment {
-  margin-left: 20px;
-  border-left: 3px solid #e0e0e0;
-  padding-left: 10px;
-}
-
-.reply-indicator {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-  font-size: 0.85em;
-  color: #666;
-}
-
-.reply-icon {
-  font-size: 16px;
-  height: 16px;
-  width: 16px;
-  margin-right: 5px;
-}
-
-.reply-to-name {
-  font-weight: 500;
-}
-
-.comment-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 5px;
-}
-
-.reply-button {
-  font-size: 0.85em;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
 } 
