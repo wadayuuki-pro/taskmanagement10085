@@ -357,13 +357,13 @@ export class CommentSectionComponent implements OnInit, OnDestroy, OnChanges {
       const afterCursor = content.substring(cursorPosition);
       
       // @の後の文字列を置き換える
-      const match = beforeCursor.match(/@(\w*)$/);
+      const match = beforeCursor.match(/@([^\s]*)$/);
       if (match) {
         const startPos = beforeCursor.lastIndexOf('@');
         const newContent = content.substring(0, startPos) + `@${user.displayName} ` + afterCursor;
         
         // フォームの値を更新（setValueを使用）
-        form.setValue({
+        form.patchValue({
           content: newContent
         });
         
