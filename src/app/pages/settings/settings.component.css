@@ -1,0 +1,171 @@
+.settings-container {
+    margin-left: var(--sidebar-width, 240px);
+    min-height: calc(100vh - 32px);
+    position: relative;
+    width: calc(100% - var(--sidebar-width, 240px));
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.settings-header {
+    margin-bottom: 32px;
+}
+
+.settings-header h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.settings-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.settings-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.settings-section {
+    background: var(--surface-card);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-section h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.settings-card {
+    background: var(--surface-card);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.settings-card h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.setting-item {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.theme-toggle button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--active-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.theme-toggle button:hover {
+    background-color: var(--active-background);
+    transform: translateY(-1px);
+}
+
+.theme-toggle button mat-icon {
+    margin-right: 4px;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+/* ダークテーマ対応 */
+:host-context(.dark-theme) {
+    --surface-card: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+}
+
+:host-context(.light-theme) {
+    --surface-card: #ffffff;
+    --text-primary: #000000;
+    --text-secondary: #666666;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .settings-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+    }
+    
+    .settings-section {
+        padding: 16px;
+    }
+    
+    .settings-section h2 {
+        font-size: 20px;
+    }
+    
+    .settings-section p {
+        font-size: 14px;
+    }
+}
+
+/* Q&Aセクションのスタイル */
+mat-accordion {
+    display: block;
+    margin: 8px 0;
+}
+
+mat-expansion-panel {
+    margin-bottom: 8px;
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-color);
+}
+
+mat-expansion-panel-header {
+    padding: 16px;
+}
+
+mat-panel-title {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.mat-expansion-panel-content {
+    padding: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* アコーディオンの展開アイコンの色を調整 */
+::ng-deep .mat-expansion-indicator::after {
+    color: var(--text-secondary);
+}
+

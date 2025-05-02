@@ -1,0 +1,100 @@
+<!-- コメントセクション -->
+<div class="comment-section">
+  <!-- デバッグ情報 -->
+  <div class="debug-info" style="font-size: 0.8em; color: #666; margin-bottom: 8px;">
+    コメント数: {{ comments.length }}
+  </div>
+
+  <div class="comment-form">
+    <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="comment-form">
+      <div class="form-group">
+        <textarea
+          #commentTextarea
+          formControlName="content"
+          placeholder="コメントを入力してください..."
+          (keyup)="onKeyUp($event)"
+          rows="3"
+        ></textarea>
+        <div class="mention-suggestions" *ngIf="showMentionSuggestions">
+          <div
+            *ngFor="let user of mentionSuggestions"
+            class="mention-suggestion-item"
+            (click)="selectMention(user, commentForm)"
+          >
+            <span class="user-name">{{ user.displayName }}</span>
+            <span class="user-email">{{ user.email }}</span>
+          </div>
+        </div>
+      </div>
+      <button
+        type="submit"
+        [disabled]="!commentForm.valid || isSubmitting"
+        class="submit-button"
+      >
+        {{ isSubmitting ? '送信中...' : '送信' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- 返信フォーム -->
+  <div class="reply-form" *ngIf="replyingTo">
+    <form [formGroup]="replyForm" (ngSubmit)="onSubmitReply()">
+      <div class="form-group">
+        <textarea
+          #replyTextarea
+          formControlName="content"
+          placeholder="返信を入力してください..."
+          (keyup)="onReplyInput($event)"
+          rows="5"
+        ></textarea>
+        <div class="mention-suggestions" *ngIf="showMentionSuggestions" [ngStyle]="mentionPosition">
+          <div
+            *ngFor="let user of mentionSuggestions"
+            class="mention-suggestion-item"
+            (click)="selectMention(user, replyForm)"
+          >
+            <span class="user-name">{{ user.displayName }}</span>
+            <span class="user-email">{{ user.email }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button type="button" (click)="cancelReply()">キャンセル</button>
+        <button type="submit" [disabled]="!replyForm.valid">返信</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- コメント一覧 -->
+  <div class="comments-list">
+    <div *ngIf="comments.length === 0" class="no-comments">
+      コメントはまだありません
+    </div>
+    <div *ngFor="let comment of comments" class="comment" [class.reply-comment]="comment.replyTo">
+      <div class="comment-header">
+        <span class="sender-name">{{ comment.senderName }}</span>
+        <span class="timestamp">{{ comment.createdAt | date:'yyyy/MM/dd HH:mm' }}</span>
+        <button *ngIf="canDeleteComment(comment) && comment.id" 
+                mat-icon-button 
+                color="warn" 
+                (click)="deleteComment(comment.id!)"
+                class="delete-button">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <div class="comment-content">
+        <div *ngIf="comment.replyTo" class="reply-indicator">
+          <mat-icon class="reply-icon">reply</mat-icon>
+          <span class="reply-to-name">{{ comment.replyToName }}さんへの返信</span>
+        </div>
+        <div [innerHTML]="formatMessageContent(comment.content)"></div>
+      </div>
+      <div class="comment-actions">
+        <button mat-button color="primary" (click)="startReply(comment)" class="reply-button">
+          <mat-icon>reply</mat-icon>
+          返信
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 

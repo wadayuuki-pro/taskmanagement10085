@@ -69,6 +69,7 @@ export class TaskInputComponent implements OnInit {
   @Input() taskToEdit?: any;
   @Input() assignedUsers: { email: string; displayName: string }[] = [];
   @Input() showAssigneeSection: boolean = false;
+  @Input() isTagPage: boolean = false;
 
   currentUser: User | null = null;
   id?: string;
@@ -118,6 +119,17 @@ export class TaskInputComponent implements OnInit {
     // 現在のユーザーを取得
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
+      if (user) {
+        // ホームページでの新規作成時は、ログインユーザーを自動的に担当者として設定
+        if (!this.isTagPage && !this.taskToEdit) {
+          this.showAssigneeSection = true;
+          this.assignedUsers = [{
+            email: user.email || '',
+            displayName: user.displayName || user.email || ''
+          }];
+          this.selectedAssignedUsers = [user.email || ''];
+        }
+      }
     });
 
     if (this.isEditMode) {
@@ -125,6 +137,7 @@ export class TaskInputComponent implements OnInit {
       
       this.title = this.injectedTaskData.title || '';
       this.content = this.injectedTaskData.content || '';
+      this.isTagPage = this.injectedTaskData.isTagPage || false;
       
       // FirestoreのTimestamp型をDate型に変換
       if (this.injectedTaskData.startDate && this.injectedTaskData.startDate.toDate) {
@@ -146,26 +159,40 @@ export class TaskInputComponent implements OnInit {
       this.priority = this.injectedTaskData.priority || 'medium';
       this.status = this.injectedTaskData.status || '未着手';
       this.tagNames = this.injectedTaskData.tag || '';
-      this.imageUrl = this.injectedTaskData.imageUrl || null;
+      
+      // 画像URLの処理を修正
+      if (this.injectedTaskData.imageUrl) {
+        const fileId = this.extractFileId(this.injectedTaskData.imageUrl);
+        if (fileId) {
+          this.imageUrl = `https://drive.google.com/uc?id=${fileId}`;
+        } else {
+          this.imageUrl = this.injectedTaskData.imageUrl;
+        }
+      } else {
+        this.imageUrl = null;
+      }
+      
       this.location = this.injectedTaskData.location || null;
       
-      // 編集時は既存の担当者情報を設定（過去に担当者が追加された場合のみ）
-      if (this.injectedTaskData.assignedUsers && this.injectedTaskData.assignedUsers.length > 0) {
-        if (Array.isArray(this.injectedTaskData.assignedUsers)) {
-          this.selectedAssignedUsers = this.injectedTaskData.assignedUsers.map((user: { email: string; displayName: string }) => user.email);
-          this.assignedUsers = this.injectedTaskData.assignedUsers;
+      // 担当者セクションの表示制御を修正
+      if (this.isTagPage) {
+        // タグページの場合：編集時のみ担当者セクションを表示
+        if (this.injectedTaskData.assignedUsers && this.injectedTaskData.assignedUsers.length > 0) {
+          this.showAssigneeSection = true;
+          if (Array.isArray(this.injectedTaskData.assignedUsers)) {
+            this.selectedAssignedUsers = this.injectedTaskData.assignedUsers.map((user: { email: string; displayName: string }) => user.email);
+            this.assignedUsers = this.injectedTaskData.assignedUsers;
+          } else {
+            const users = Object.values(this.injectedTaskData.assignedUsers) as { email: string; displayName: string }[];
+            this.selectedAssignedUsers = users.map(user => user.email);
+            this.assignedUsers = users;
+          }
         } else {
-          const users = Object.values(this.injectedTaskData.assignedUsers) as { email: string; displayName: string }[];
-          this.selectedAssignedUsers = users.map(user => user.email);
-          this.assignedUsers = users;
+          this.showAssigneeSection = false;
         }
-        // 担当者が存在する場合のみ担当者セクションを表示
-        this.showAssigneeSection = true;
       } else {
-        // 担当者が存在しない場合は担当者セクションを非表示
+        // ホームページの場合：担当者セクションを非表示
         this.showAssigneeSection = false;
-        this.assignedUsers = [];
-        this.selectedAssignedUsers = [];
       }
       
       console.log('TaskInputComponent: 処理後のデータ', {
@@ -176,6 +203,7 @@ export class TaskInputComponent implements OnInit {
         priority: this.priority,
         status: this.status,
         tagNames: this.tagNames,
+        imageUrl: this.imageUrl,
         showAssigneeSection: this.showAssigneeSection,
         selectedAssignedUsers: this.selectedAssignedUsers,
         assignedUsers: this.assignedUsers
@@ -186,16 +214,13 @@ export class TaskInputComponent implements OnInit {
         this.loadAssignedUsers();
       }
     } else {
-      // 新規作成時は担当者セクションを表示
-      this.showAssigneeSection = true;
-      // 新規作成時は担当者リストを空にする
-      this.assignedUsers = [];
-      this.selectedAssignedUsers = [];
-      
-      // タグが指定されている場合は、そのタグにアサインされているユーザーを取得
-      if (this.injectedTaskData?.tag) {
-        this.tagNames = this.injectedTaskData.tag;
+      // 新規作成時の処理
+      this.showAssigneeSection = this.isTagPage;
+      if (this.isTagPage) {
+        // タグページからの新規作成時は担当者セクションを表示
         this.loadAssignedUsers();
+        // 新規作成時は担当者を選択していない状態にする
+        this.selectedAssignedUsers = [];
       }
     }
   }
@@ -203,32 +228,35 @@ export class TaskInputComponent implements OnInit {
   // プロジェクトにアサインされているユーザーを取得するメソッドを追加
   async loadAssignedUsers() {
     try {
-      // プロジェクト（タグ）にアサインされているユーザーを取得
-      const tagId = this.tagNames; // タグ名をIDとして使用
-      if (tagId) {
-        const users = await this.tagService.getAssignedUsers(tagId);
+      if (!this.tagNames) {
+        console.log('タグ名が設定されていません');
+        return;
+      }
+
+      console.log('タグ名で担当者を検索:', this.tagNames);
+      
+      // タグ名で検索して既存のタグを探す
+      const tagCollectionRef = collection(this.firestore, 'tags');
+      const tagQuery = query(tagCollectionRef, where('name', '==', this.tagNames));
+      const tagSnapshot = await getDocs(tagQuery);
+      
+      if (!tagSnapshot.empty) {
+        const data = tagSnapshot.docs[0].data();
+        const users = data['assignedUsers'] || [];
+        console.log('取得した担当者:', users);
         
-        // 現在のユーザーが取得できている場合、ユーザーリストに追加
-        if (this.currentUser && this.currentUser.email) {
-          const currentUserData = {
-            email: this.currentUser.email,
-            displayName: this.currentUser.displayName || this.currentUser.email
-          };
-          
-          // 現在のユーザーが既にリストに含まれていない場合のみ追加
-          if (!users.some(user => user.email === currentUserData.email)) {
-            users.push(currentUserData);
-          }
-        }
-        
-        // 新規作成時は担当者として選択しない
-        if (!this.isEditMode) {
-          this.assignedUsers = users;
-          this.selectedAssignedUsers = [];
-        } else {
+        if (this.isEditMode) {
           // 編集時は既存の担当者情報を保持
           this.assignedUsers = users;
+          console.log('編集モード: 担当者を設定', this.assignedUsers);
+        } else {
+          // 新規作成時は担当者リストのみを設定（選択はしない）
+          this.assignedUsers = users;
+          this.selectedAssignedUsers = [];
+          console.log('新規作成モード: 担当者リストを設定', this.assignedUsers);
         }
+      } else {
+        console.log('タグが見つかりませんでした');
       }
     } catch (error) {
       console.error('担当者情報の取得に失敗しました:', error);
@@ -352,6 +380,20 @@ export class TaskInputComponent implements OnInit {
         }
       }
 
+      // 画像の処理
+      let finalImageUrl = this.imageUrl;
+      if (this.selectedImage) {
+        // 新規画像が選択されている場合
+        const taskId = this.id || crypto.randomUUID();
+        const uploadedImageUrl = await this.handleImageUpload(taskId);
+        if (uploadedImageUrl) {
+          finalImageUrl = uploadedImageUrl;
+        }
+      } else if (!this.imageUrl && this.id) {
+        // 既存のタスクで画像が削除された場合
+        finalImageUrl = null;
+      }
+
       const taskData = {
         title: this.title,
         content: this.content,
@@ -360,9 +402,11 @@ export class TaskInputComponent implements OnInit {
         priority: this.priority,
         status: this.status,
         tag: this.tagNames,
-        createdAt: Timestamp.now(),
+        createdAt: this.id ? (this.injectedTaskData.createdAt || Timestamp.now()) : Timestamp.now(),
         updatedAt: Timestamp.now(),
         ownerId: this.currentUser.uid,
+        location: this.location,
+        imageUrl: finalImageUrl,
         assignedUsers: this.selectedAssignedUsers.map(email => ({
           email: email,
           displayName: this.getSelectedAssigneeDisplayName(email)
@@ -373,11 +417,11 @@ export class TaskInputComponent implements OnInit {
       if (this.id) {
         // 既存のタスクを更新
         await this.taskService.updateTask(this.id, taskData);
-        console.log('タスクを更新しました:', this.id);
+        console.log('タスクを更新しました:', this.id, '画像URL:', finalImageUrl);
       } else {
         // 新規タスクを作成
         await this.taskService.addTask(taskData);
-        console.log('新規タスクを作成しました');
+        console.log('新規タスクを作成しました。画像URL:', finalImageUrl);
       }
 
       this.overlayService.close();
@@ -394,6 +438,10 @@ export class TaskInputComponent implements OnInit {
     // 担当者変更時の処理（必要に応じて追加）
   }
 
+  clearAllAssignees() {
+    this.selectedAssignedUsers = [];
+  }
+
   // メールアドレスの@より前の部分を取得するメソッド
   getEmailLocalPart(email: string): string {
     if (!email) return '';
@@ -405,5 +453,23 @@ export class TaskInputComponent implements OnInit {
     const user = this.assignedUsers.find(u => u.email === email);
     if (!user) return email;
     return user.displayName || user.email;
+  }
+
+  // Google DriveのファイルIDを抽出するメソッドを追加
+  private extractFileId(url: string): string | null {
+    // URLからファイルIDを抽出（複数のパターンに対応）
+    const patterns = [
+      /[\/?]([a-zA-Z0-9_-]{25,})/,      // 基本的なIDパターン
+      /\/d\/([^/]+)/,                    // /d/IDパターン
+      /id=([^&]+)/                       // id=IDパターン
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    return null;
   }
 }

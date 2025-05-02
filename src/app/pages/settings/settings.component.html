@@ -1,0 +1,99 @@
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>設定</h1>
+        <p class="settings-description">アプリケーションの設定を管理します</p>
+    </div>
+
+    <div class="settings-content">
+        <!-- 通知設定 -->
+        <section class="settings-section">
+            <h2>通知設定</h2>
+            <div class="settings-card">
+                <h3>Googleカレンダー通知</h3>
+                <div class="setting-item">
+                    <mat-form-field appearance="outline" class="calendar-notification-field">
+                        <mat-label for="calendar-notification-time">カレンダー通知時間</mat-label>
+                        <mat-select id="calendar-notification-time" [(ngModel)]="settings.calendarNotificationTime" (ngModelChange)="saveSettings()">
+                            <mat-option value="5">5分前</mat-option>
+                            <mat-option value="10">10分前</mat-option>
+                            <mat-option value="15">15分前</mat-option>
+                            <mat-option value="30">30分前</mat-option>
+                            <mat-option value="60">1時間前</mat-option>
+                            <mat-option value="120">2時間前</mat-option>
+                            <mat-option value="1440">1日前</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <p class="setting-description">
+                    この設定は、タスクをGoogleカレンダーに同期する際の通知時間として使用されます。
+                </p>
+            </div>
+        </section>
+
+        <!-- Q&A -->
+        <section class="settings-section">
+            <h2>よくある質問</h2>
+            <div class="settings-card">
+                <mat-accordion>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                タスクの複製について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>タスクカード上で右クリックすると複製ボタンが表示され、タスクを複製することができます。</p>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                タスクの同期について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>タスクのGoogleカレンダーへの同期は手動です。カレンダー同期ページにボタンがありますのでご確認ください。</p>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                通知設定について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>・締切の通知設定は、タスクの締切時刻からどのくらい前に通知を受け取るかを設定できます。この設定は、Googleカレンダー同期後に適用されます。</p>
+                        <p>・メンション通知は、コメントでメンションされた場合に通知が届きます。</p>
+                        <p>・タスク割り当て時の通知設定は、タスクを割り当てた場合に通知が届きます。</p>
+
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                タスクの削除について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>削除したタスクは、ゴミ箱に7日間保存されます。この期間中であれば復元が可能です。7日間を過ぎると完全に削除され、復元することはできません。</p>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                タグの管理について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>タグ（プロジェクト）はタスク入力画面のプロジェクト名を新しく設定した場合に自動的に作成されます。タグをクリックすると、そのタグが付いたタスクの一覧が表示されます。また、タグを右クリックするとそのタグページを削除することができます。</p>
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                位置情報の利用について
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <p>タスクに位置情報を設定することで、地図上でタスクを管理できます。</p>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </section>
+    </div>
+</div>

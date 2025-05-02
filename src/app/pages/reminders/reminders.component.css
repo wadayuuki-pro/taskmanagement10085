@@ -1,0 +1,226 @@
+.reminders-container {
+    margin-left: var(--sidebar-width, 240px);
+    min-height: calc(100vh - 32px);
+    position: relative;
+    width: calc(100% - var(--sidebar-width, 240px));
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+h1 {
+    margin: 0;
+    color: #333;
+}
+
+.task-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    margin: 0 auto; 
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.empty-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #9e9e9e;
+    margin-bottom: 16px;
+}
+
+.empty-state h2 {
+    color: #424242;
+    font-size: 24px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.empty-state p {
+    color: #757575;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.empty-state .hint {
+    color: #1976d2;
+    font-size: 14px;
+    font-style: italic;
+    margin-top: 16px;
+}
+
+.overdue {
+    border: 2px solid #f44336 !important;
+    background-color: #ffebee !important;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .reminders-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+    }
+    
+    .task-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    gap: 16px;
+    margin-left: var(--sidebar-width, 240px);
+    box-sizing: border-box;
+    min-height: calc(100vh - 32px);
+    width: calc(100% - var(--sidebar-width, 240px));
+    position: relative;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #333;
+    margin: 16px 0;
+    padding: 0 16px;
+    width: 100%;
+}
+
+.page-title mat-icon {
+    vertical-align: middle;
+    margin-right: 8px;
+    color: #1976d2;
+}
+
+.task-list-reminders {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.priority-high {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.priority-medium {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.priority-low {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.due-date {
+    font-size: 14px;
+    color: #666;
+}
+
+.due-date.overdue {
+    color: #d32f2f;
+    font-weight: 500;
+}
+
+.task-content {
+    h3 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    p {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        color: #666;
+        line-height: 1.4;
+    }
+}
+
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.tag {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.no-tasks {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    p {
+        margin: 0;
+        color: #666;
+        font-size: 16px;
+    }
+}
+  

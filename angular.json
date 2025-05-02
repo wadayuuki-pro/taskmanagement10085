@@ -5,7 +5,11 @@
   "projects": {
     "my-taskmanagement-app": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -21,21 +25,23 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/assets",
+              "src/favicon.ico",
+              "src/manifest.webmanifest",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "node_modules/leaflet/dist/images",
+                "output": "/assets/leaflet/images"
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": ["node_modules/firebase/firebase-auth-compat.js"
-],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": [
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -51,7 +57,8 @@
                   "maximumError": "4kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -83,18 +90,14 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": ["node_modules/firebase/firebase-auth-compat.js"
-]
+            "scripts": [
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.js"
+            ]
           }
         }
       }

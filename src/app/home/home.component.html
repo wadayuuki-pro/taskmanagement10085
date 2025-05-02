@@ -1,0 +1,36 @@
+<div class="home-container">
+    <div class="main-content">
+        <div class="header">
+            <h1>タスク一覧</h1>
+            <button class="add-button" (click)="openTaskInput()">
+                <mat-icon>add</mat-icon>
+                <span>タスクを追加</span>
+            </button>
+        </div>
+
+        <div class="search-container">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-label for="task-search-input">タスクを検索</mat-label>
+                <input matInput id="task-search-input" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="タグ、タイトル、内容で検索">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <div class="task-list">
+            <app-task-card *ngFor="let task of filteredTasks$ | async" [task]="task" [mode]="'home'" [showActions]="true" (click)="editTask(task)"
+                (delete)="deleteTask($event)" (archive)="archiveTask($event)" (duplicate)="duplicateTask($event)"></app-task-card>
+        </div>
+
+        <div class="empty-state" *ngIf="(filteredTasks$ | async)?.length === 0">
+            <mat-icon class="empty-icon">assignment</mat-icon>
+            <h2>タスクがありません</h2>
+            <p>新しいタスクを追加してください</p>
+            <button class="add-button" (click)="openTaskInput()">
+                <mat-icon>add</mat-icon>
+                <span>タスクを追加</span>
+            </button>
+        </div>
+    </div>
+</div>
+  
+  

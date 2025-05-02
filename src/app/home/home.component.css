@@ -1,0 +1,132 @@
+.home-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--background-secondary);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 24px;
+    margin-left: var(--sidebar-width, 240px);
+    transition: margin-left 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 16px;
+}
+
+h1 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--active-color);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transition: all 0.3s ease;
+}
+
+.add-button:hover {
+    background-color: var(--active-background);
+    box-shadow: 0 6px 12px var(--shadow-color);
+    transform: translateY(-2px);
+}
+
+.add-button mat-icon {
+    margin-right: 8px;
+}
+
+.search-container {
+    margin-bottom: 24px;
+    padding: 0 16px;
+}
+
+.search-field {
+    width: 100%;
+    max-width: 600px;
+}
+
+.task-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 0 auto;
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+.empty-state {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + var(--sidebar-width, 240px) / 2);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 40px;
+    background: var(--surface-card);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    width: 400px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.empty-state h2 {
+    margin: 0 0 8px 0;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    margin: 0 0 16px 0;
+    color: var(--text-secondary);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 16px;
+    }
+    
+    .task-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .add-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+
+

@@ -1,0 +1,36 @@
+<div class="tutorial-overlay" *ngIf="currentStep > 0">
+  <div class="tutorial-content" [ngClass]="'step-' + currentStep">
+    <div class="tutorial-header">
+      <h2>{{ getCurrentStepTitle() }}</h2>
+      <button mat-icon-button (click)="skipTutorial()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="tutorial-body">
+      {{ getCurrentStepContent() }}
+    </div>
+    
+    <div class="tutorial-footer">
+      <div class="step-indicators">
+        <div *ngFor="let _ of steps; let i = index" 
+             class="step-dot"
+             [class.active]="currentStep === i + 1">
+        </div>
+      </div>
+      <div class="tutorial-actions">
+        <button mat-button *ngIf="currentStep > 1" (click)="previousStep()">
+          前へ
+        </button>
+        <button mat-raised-button color="primary" (click)="nextStep()">
+          {{ currentStep === steps.length ? '始める' : '次へ' }}
+        </button>
+      </div>
+      <div class="hide-tutorial-option">
+        <mat-checkbox [(ngModel)]="hideNextTime" (change)="onHideOptionChange()">
+          次回から表示しない
+        </mat-checkbox>
+      </div>
+    </div>
+  </div>
+</div> 

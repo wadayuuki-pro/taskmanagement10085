@@ -1,0 +1,133 @@
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.tutorial-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tutorial-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.tutorial-body {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 24px;
+  min-height: 100px;
+}
+
+.tutorial-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.step-indicators {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+}
+
+.step-dot.active {
+  background-color: #1976d2;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 16px;
+}
+
+::ng-deep .tutorial-actions button.mat-raised-button,
+::ng-deep .tutorial-actions button.mat-mdc-raised-button {
+  background-color: #1976d2 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10) !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s !important;
+}
+
+::ng-deep .tutorial-actions button.mat-raised-button:hover,
+::ng-deep .tutorial-actions button.mat-mdc-raised-button:hover {
+  background-color: #1565c0 !important;
+}
+
+::ng-deep .tutorial-actions button.mat-button,
+::ng-deep .tutorial-actions button.mat-mdc-button {
+  background-color: #1976d2 !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: background 0.2s !important;
+}
+
+::ng-deep .tutorial-actions button.mat-button:hover,
+::ng-deep .tutorial-actions button.mat-mdc-button:hover {
+  background-color: #1565c0 !important;
+}
+
+.hide-tutorial-button {
+  margin-top: 8px;
+  color: #666 !important;
+  font-size: 0.9rem !important;
+}
+
+.hide-tutorial-button:hover {
+  color: #f44336 !important;
+  background-color: rgba(244, 67, 54, 0.04) !important;
+}
+
+.hide-tutorial-option {
+  margin-top: 16px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+::ng-deep .hide-tutorial-option .mat-mdc-checkbox {
+  --mdc-checkbox-selected-focus-icon-color: #f44336;
+  --mdc-checkbox-selected-hover-icon-color: #f44336;
+  --mdc-checkbox-selected-icon-color: #f44336;
+  --mdc-checkbox-selected-pressed-icon-color: #f44336;
+}
+
+::ng-deep .hide-tutorial-option .mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
+  border-color: #f44336 !important;
+  background-color: #f44336 !important;
+}
+
+::ng-deep .hide-tutorial-option .mdc-checkbox:hover .mdc-checkbox__native-control:enabled~.mdc-checkbox__background {
+  border-color: #f44336 !important;
+} 

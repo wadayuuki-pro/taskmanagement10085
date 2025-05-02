@@ -1,0 +1,27 @@
+<div class="trash-container">
+  <div class="search-container">
+    <mat-form-field class="search-field">
+      <mat-label for="trash-search-input">タスクを検索</mat-label>
+      <input matInput id="trash-search-input" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="タグ、タイトル、内容で検索">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="task-list" *ngIf="filteredTasks.length > 0">
+    <app-task-card
+      *ngFor="let task of filteredTasks"
+      [task]="task"
+      [mode]="'trash'"
+      [showActions]="true"
+      (restore)="restoreTask(task.id)"
+      (parmanentlyDelete)="deleteTask(task.id)">
+    </app-task-card>
+  </div>
+  <div class="empty-state" *ngIf="filteredTasks.length === 0">
+    <mat-icon class="empty-icon">delete</mat-icon>
+    <h2>ゴミ箱は空です</h2>
+    <p>削除したタスクはここに表示されます</p>
+    <p class="hint">タスクを完全に削除するには、ゴミ箱内のタスクの「完全に削除」ボタンをクリックしてください</p>
+    <p class="hint">7日後に自動的に完全削除されます</p>
+  </div>
+</div>

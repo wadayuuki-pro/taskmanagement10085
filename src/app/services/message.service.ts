@@ -217,18 +217,6 @@ export class MessageService {
       }
     }
 
-    // アサインされているユーザーも通知対象に追加
-    if (tagId) {
-      const assignedUsers = await this.getAssignedUsers(tagId);
-      console.log('タグにアサインされているユーザー:', assignedUsers);
-      for (const user of assignedUsers) {
-        if (user.email && !mentions.includes(user.email)) {
-          mentions.push(user.email);
-          console.log('アサインされているユーザーを通知対象に追加:', user.email);
-        }
-      }
-    }
-
     console.log('抽出されたメンション:', mentions);
     return { mentions, formattedContent };
   }
@@ -331,24 +319,30 @@ export class MessageService {
 
   // 返信メッセージを送信する
   async sendReplyMessage(tagId: string, content: string, replyToId: string, replyToName: string): Promise<string> {
-    console.log('sendReplyMessage called with tagId:', tagId, 'content:', content, 'replyToId:', replyToId);
+    console.log('sendReplyMessage called with tagId:', tagId, 'content:', content);
     const currentUser = await firstValueFrom(this.authService.getCurrentUser());
     if (!currentUser) {
       console.error('User not authenticated');
       throw new Error('ユーザーが認証されていません');
     }
 
+    // メンションされたユーザーを抽出（非同期処理を待つ）
+    console.log('返信メッセージのメンション抽出を開始します');
+    const { mentions, formattedContent } = await this.extractMentions(content, tagId);
+    console.log('抽出されたメンション:', mentions);
+
     const message: Omit<Message, 'id'> = {
       tagId,
       senderEmail: currentUser.email || '',
       senderName: currentUser.displayName || '匿名',
-      content,
+      content: formattedContent,
       createdAt: new Date(),
       replyTo: replyToId,
-      replyToName: replyToName
+      replyToName: replyToName,
+      mentions: mentions
     };
 
-    console.log('Creating reply message document:', message);
+    console.log('作成する返信メッセージ:', message);
     try {
       const messagesRef = collection(this.firestore, 'messages');
       const docRef = await addDoc(messagesRef, {
@@ -356,10 +350,10 @@ export class MessageService {
         createdAt: Timestamp.fromDate(message.createdAt)
       });
 
-      console.log('Reply message document created with ID:', docRef.id);
+      console.log('返信メッセージを作成しました。ID:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('Error saving reply message to Firestore:', error);
+      console.error('返信メッセージの保存中にエラーが発生しました:', error);
       throw error;
     }
   }

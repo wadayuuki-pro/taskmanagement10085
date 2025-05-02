@@ -1,0 +1,316 @@
+.comment-section {
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 1rem;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &.header-comment-section {
+    margin: 0;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .comment-form {
+    position: relative;
+    margin-bottom: 1rem;
+
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 80px;
+      font-size: 14px;
+      line-height: 1.5;
+
+      &:focus {
+        outline: none;
+        border-color: #2196f3;
+      }
+    }
+
+    .mention-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      max-height: 200px;
+      overflow-y: auto;
+
+      .mention-suggestion-item {
+        padding: 0.5rem;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        .user-name {
+          font-weight: 500;
+          color: #333;
+        }
+
+        .user-email {
+          font-size: 12px;
+          color: #666;
+        }
+      }
+    }
+
+    .submit-button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+
+      &:hover {
+        background-color: #1976d2;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .comments-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .no-comments {
+      text-align: center;
+      color: #888;
+      padding: 12px;
+      font-style: italic;
+    }
+
+    .comment {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .sender-name {
+          font-weight: 500;
+          color: #333;
+        }
+
+        .timestamp {
+          font-size: 12px;
+          color: #666;
+        }
+
+        .delete-button {
+          padding: 0;
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          min-width: 24px;
+          
+          ::ng-deep .mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+          }
+        }
+      }
+
+      .content {
+        color: #333;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+    }
+  }
+}
+
+// 返信フォームのスタイル
+.reply-form {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+
+  .form-group {
+    position: relative;
+    margin-bottom: 1rem;
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 120px;
+      font-size: 14px;
+      line-height: 1.5;
+
+      &:focus {
+        outline: none;
+        border-color: #2196f3;
+      }
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+
+    button {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &[type="submit"] {
+        background-color: #2196f3;
+        color: white;
+        border: none;
+
+        &:hover {
+          background-color: #1976d2;
+        }
+
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
+      }
+
+      &[type="button"] {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+    }
+  }
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reply-to-label {
+  font-weight: 500;
+  color: #2196f3;
+}
+
+.cancel-reply-button {
+  color: #666;
+}
+
+.reply-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.reply-input {
+  width: 100%;
+}
+
+.reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+// 返信コメントのスタイル
+.reply-comment {
+  margin-left: 20px;
+  border-left: 3px solid #e0e0e0;
+  padding-left: 10px;
+}
+
+.reply-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 0.85em;
+  color: #666;
+}
+
+.reply-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 5px;
+}
+
+.reply-to-name {
+  font-weight: 500;
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.reply-button {
+  font-size: 0.85em;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+} 

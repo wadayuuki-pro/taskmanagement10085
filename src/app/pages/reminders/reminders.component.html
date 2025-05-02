@@ -1,0 +1,16 @@
+<div class="reminders-container">
+ 
+
+  <div class="task-list">
+    <app-task-card *ngFor="let task of tasks$ | async" [task]="task" [mode]="'home'" [showActions]="true"
+      [ngClass]="{'overdue': isOverdue(task)}" (delete)="deleteTask($event)" (archive)="archiveTask($event)"></app-task-card>
+  </div>
+
+  <div class="empty-state" *ngIf="(tasks$ | async)?.length === 0">
+    <mat-icon class="empty-icon">event</mat-icon>
+    <h2>締切付きタスクはありません</h2>
+    <p>タスクに締切を設定すると、ここに表示されます</p>
+    <p class="hint">締切が近いタスクは赤色で表示されます</p>
+  </div>
+</div>
+  

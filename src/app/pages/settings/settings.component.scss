@@ -1,0 +1,168 @@
+.settings-container {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  min-height: calc(100vh - 64px);
+}
+
+.settings-header {
+  margin-bottom: 40px;
+  text-align: center;
+
+  h1 {
+    margin-bottom: 12px;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1976d2;
+    letter-spacing: -0.5px;
+  }
+
+  .settings-description {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.settings-section {
+  h2 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e4ea;
+  }
+}
+
+.settings-card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e4ea;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1976d2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 1.4rem;
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+}
+
+.setting-item {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e4ea;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.calendar-notification-field {
+  width: 100%;
+  max-width: 300px;
+
+  ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  ::ng-deep .mat-form-field-outline {
+    background-color: white;
+  }
+}
+
+.setting-description {
+  margin-top: 12px;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+// アコーディオンのスタイル
+::ng-deep .mat-expansion-panel {
+  background: white;
+  border-radius: 8px !important;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #e0e4ea;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  }
+}
+
+::ng-deep .mat-expansion-panel-header {
+  padding: 16px 24px;
+  height: auto !important;
+  min-height: 48px;
+}
+
+::ng-deep .mat-expansion-panel-header-title {
+  color: #333;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 16px 24px;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+// レスポンシブ対応
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 20px;
+  }
+
+  .settings-header {
+    h1 {
+      font-size: 1.8rem;
+    }
+
+    .settings-description {
+      font-size: 1rem;
+    }
+  }
+
+  .settings-section {
+    h2 {
+      font-size: 1.4rem;
+    }
+  }
+
+  .settings-card {
+    padding: 20px;
+  }
+
+  .calendar-notification-field {
+    max-width: 100%;
+  }
+} 

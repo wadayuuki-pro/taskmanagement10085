@@ -1,0 +1,408 @@
+.task-input-form {
+  max-width: 480px;
+  width: 96vw;
+  max-height: 92vh;
+  margin: 16px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 16px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+/* フォームフィールドの共通スタイル */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  border-radius: 6px;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-start,
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-end {
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0;
+  padding-bottom: 0.5em;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex {
+  margin-top: 0;
+  padding: 0 8px;
+}
+
+/* ボタンの共通スタイル */
+button.mat-button,
+button.mat-raised-button,
+button.mat-stroked-button {
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .task-input-form {
+    max-width: 99vw;
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  .title-row, .start-date-priority-row, .due-date-time-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .date-field, .priority-field, .time-select {
+    width: 100%;
+  }
+  .task-actions button {
+    min-width: 80px;
+    font-size: 14px;
+  }
+}
+
+.task-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.title-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.project-field, .task-name-field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.date-time-priority-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.start-date-priority-row, .due-date-time-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.date-field {
+  min-width: 200px;
+  flex: 1;
+}
+
+.priority-field {
+  min-width: 100px;
+}
+
+.time-select {
+  display: flex;
+  gap: 8px;
+  min-width: 180px;
+  margin-left: auto;
+}
+
+.time-select mat-form-field {
+  width: 90px;
+  min-width: 90px;
+}
+
+::ng-deep .time-select .mat-form-field-infix {
+  padding: 0.5em 0 !important;
+  width: 90px !important;
+}
+
+::ng-deep .time-select .mat-select-value {
+  padding: 0 8px !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.task-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.image-upload-section {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-preview {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-image {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.image-upload-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.image-upload-button button {
+  min-width: 140px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-upload-button button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  justify-content: center;
+}
+
+.status-buttons button {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.status-buttons button.active {
+  background: #1976d2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+}
+
+.status-buttons button:hover:not(.active) {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.location-section {
+  margin: 0;
+  padding: 0;
+  border-top: none;
+}
+
+.location-section h3 {
+  font-size: 1rem;
+  color: #1976d2;
+  margin-bottom: 4px;
+}
+
+.task-actions button {
+  min-width: 90px;
+  font-size: 14px;
+}
+
+.task-actions button:first-child {
+  background: #1976d2;
+  color: #fff;
+}
+
+.task-actions button:first-child:hover {
+  background: #1565c0;
+}
+
+.task-actions button:last-child {
+  background: #757575;
+  color: #fff;
+  }
+
+.task-actions button:last-child:hover {
+  background: #616161;
+}
+
+.assignee-section {
+  margin-bottom: 8px;
+  padding: 8px 0 0 0;
+}
+
+.assignee-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.assignee-header .mat-form-field {
+  flex: 1;
+  min-width: 300px;
+}
+
+.assignee-header button {
+  margin-top: 4px;
+  height: 36px;
+  white-space: nowrap;
+}
+
+.assignee-header button mat-icon {
+  margin-right: 4px;
+}
+
+.current-user-info {
+  font-size: 13px;
+  color: #1976d2;
+  margin-bottom: 4px;
+}
+
+/* アサイン機能の表示幅を広げる */
+::ng-deep .mat-select-panel {
+  min-width: 200px !important;
+}
+
+::ng-deep .mat-option {
+  white-space: normal !important;
+  line-height: 1.5 !important;
+  height: auto !important;
+  padding: 8px 16px !important;
+}
+
+::ng-deep .mat-select-value-text {
+  white-space: normal !important;
+  line-height: 1.5 !important;
+}
+
+::ng-deep .mat-form-field-infix {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+@media (max-width: 768px) {
+  .date-time-priority-row {
+    grid-template-columns: 1fr;
+  }
+
+  .time-select {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 入力欄の内側に余白を追加 */
+::ng-deep input.mat-input-element,
+::ng-deep textarea.mat-input-element {
+  padding-left: 12px !important;
+  box-sizing: border-box;
+}
+
+.selected-assignees {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.selected-assignee-badge {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.selected-assignee-badge mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1976d2;
+}
+
+.assignee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assignee-name {
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.assignee-email {
+  font-size: 11px;
+  color: #666;
+}
+
+/* カレンダーのスタイル */
+:host ::ng-deep .mat-calendar-body-cell {
+  position: relative;
+}
+
+:host ::ng-deep .mat-calendar-body-cell:hover {
+  background-color: #e3f2fd !important;
+}
+
+:host ::ng-deep .mat-calendar-body-cell-content {
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  margin: 0 auto !important;
+}
+
+:host ::ng-deep .mat-calendar-body-cell:hover .mat-calendar-body-cell-content {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+:host ::ng-deep .mat-calendar-body-selected {
+  background-color: #1976d2 !important;
+  color: white !important;
+}
+
+:host ::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+:host ::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: #1976d2 !important;
+}
+
+
+  
+
+
+

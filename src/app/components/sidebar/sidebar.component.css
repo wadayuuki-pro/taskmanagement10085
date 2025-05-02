@@ -1,0 +1,263 @@
+.sidebar {
+  width: 240px;
+  min-width: 180px;
+  max-width: 300px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #f3f4f6;
+  overflow-y: auto;
+  padding-top: 64px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.custom-list-item {
+  border-radius: 8px;
+  margin: 4px 8px;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.custom-list-item.active {
+  background-color: var(--active-background);
+  color: var(--active-color);
+}
+
+.custom-list-item:hover:not(.active) {
+  background-color: var(--hover-background);
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--surface-card);
+  margin: 4px 8px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px var(--shadow-color);
+  transition: all 0.2s ease;
+}
+
+.tag-item:hover {
+  box-shadow: 0 2px 5px var(--shadow-color);
+  transform: translateY(-1px);
+}
+
+.custom-list-item-user-tag {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.custom-list-item-user-tag.active {
+  background-color: var(--active-background);
+  color: var(--active-color);
+}
+
+.custom-list-item-user-tag:hover:not(.active) {
+  background-color: var(--hover-background);
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+} 
+
+button:hover {
+  background-color: var(--hover-background);
+  border-radius: 8px;
+}
+
+.resizer {
+  width: 4px;
+  height: 100%;
+  background: transparent;
+  cursor: ew-resize;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: background 0.2s ease;
+}
+
+.resizer:hover {
+  background: var(--border-color);
+}
+
+.context-menu {
+  position: fixed;
+  background-color: var(--surface-card);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  z-index: 1000;
+  padding: 8px;
+  min-width: 150px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.context-menu button:hover {
+  background-color: var(--hover-background);
+}
+
+/* 削除ボタンのスタイル */
+.context-menu button[color="warn"] {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.context-menu button[color="warn"]:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* 削除ボタンのカスタムスタイル */
+.delete-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background-color: #f44336 !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 10px 16px !important;
+  margin: 4px 0;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(244, 67, 54, 0.2);
+}
+
+.delete-button:hover {
+  background-color: #d32f2f !important;
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+  transform: translateY(-1px);
+}
+
+.delete-button mat-icon {
+  margin-right: 8px;
+}
+
+/* メニュー項目のスタイル */
+mat-nav-list {
+  padding: 8px 0;
+}
+
+mat-icon {
+  color: var(--text-secondary);
+  margin-right: 12px;
+}
+
+.custom-list-item.active mat-icon {
+  color: var(--active-color);
+}
+
+/* セクション区切り */
+.sidebar-section {
+  margin: 16px 0;
+  padding: 0 16px;
+}
+
+.sidebar-section-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-left: 8px;
+}
+
+.user-profile-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #f3f4f6;
+  margin-bottom: 16px;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--surface-card);
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.user-email {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-name-button {
+  font-size: 12px;
+  padding: 4px 8px;
+  color: var(--active-color);
+}
+
+.edit-name-form {
+  margin-top: 8px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body.dark-theme .sidebar {
+  background-color: #23272e !important;
+}
+
+body.dark-theme .user-profile-section {
+  background-color: #23272e !important;
+}

@@ -1,0 +1,35 @@
+<div class="archive-container">
+    <div class="search-container">
+      <mat-form-field class="search-field">
+        <mat-label for="archive-search-input">タスクを検索</mat-label>
+        <input matInput id="archive-search-input" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="タグ、タイトル、内容で検索">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="task-list-archive">
+      <ng-container *ngIf="filteredTasks.length > 0; else noTasks">
+        <div class="task-list-archive">
+          <app-task-card
+            *ngFor="let task of filteredTasks"
+            [task]="task"
+            [mode]="'archive'"
+            [showActions]="true"
+            (archive)="restoreTask(task.id)"
+            (delete)="deleteTask(task.id)">
+          </app-task-card>
+        </div>
+      </ng-container>
+    </div>
+
+    <ng-template #noTasks>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">archive</mat-icon>
+        <h2>アーカイブされたタスクはありません</h2>
+        <p>完了したタスクはここにアーカイブされます。</p>
+        <p class="hint">タスクを完了したら、アーカイブに移動してみましょう！</p>
+      </div>
+    </ng-template>
+  
+  </div>
+  

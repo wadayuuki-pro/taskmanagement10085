@@ -1,0 +1,103 @@
+<mat-card class="task-card" 
+  [ngClass]="{
+    'task-card-home': mode === 'home',
+    'task-card-archive': mode === 'archive',
+    'task-card-trash': mode === 'trash',
+    'priority-high': task.priority === 'high',
+    'priority-medium': task.priority === 'medium',
+    'priority-low': task.priority === 'low'
+  }"
+  (click)="onClick()" (contextmenu)="onRightClick($event)">
+  <mat-icon class="pin-icon">push_pin</mat-icon>
+
+  <mat-card-title>{{ task.title }}</mat-card-title>
+
+  <!-- タグとステータスを横並びに表示 -->
+  <div class="info-row">
+    <!-- タグ（プロジェクト名）の表示 -->
+    <mat-card-subtitle *ngIf="task.tag">
+      <span class="tag-badge">
+        <mat-icon>label</mat-icon>
+        {{ task.tag }}
+      </span>
+    </mat-card-subtitle>
+
+    <!-- ステータスの表示 -->
+    <mat-card-subtitle *ngIf="task.status">
+      <span class="status-badge" [ngClass]="getStatusClass(task.status)">
+        <mat-icon>{{ getStatusIcon(task.status) }}</mat-icon>
+        {{ task.status }}
+      </span>
+    </mat-card-subtitle>
+
+    <!-- 担当者の表示 -->
+    <mat-card-subtitle *ngIf="task.assignedUsers && task.assignedUsers.length > 0">
+      <span class="assigned-user-badge">
+        <mat-icon>person</mat-icon>
+        {{ getAssignedUserNames() }}
+      </span>
+    </mat-card-subtitle>
+  </div>
+
+  <!-- 日付情報を横並びに表示 -->
+  <div class="date-row">
+    <!-- 開始日の表示 -->
+    <mat-card-subtitle *ngIf="task.startDate">
+      <mat-icon>play_circle_outline</mat-icon>
+      {{ convertToDate(task.startDate) | date:'MM/dd' }}
+    </mat-card-subtitle>
+
+    <!-- 締切日の表示 -->
+    <mat-card-subtitle *ngIf="task.dueDate">
+      <mat-icon>event</mat-icon>
+      {{ convertToDate(task.dueDate) | date:'MM/dd' }}
+    </mat-card-subtitle>
+
+    <!-- 位置情報の表示 -->
+    <mat-card-subtitle *ngIf="task.location" class="location-badge" [matTooltip]="getLocationTooltip(task.location)">
+      <mat-icon>location_on</mat-icon>
+      <span class="location-text">{{ getLocationDisplay(task.location) }}</span>
+    </mat-card-subtitle>
+  </div>
+
+  <mat-card-content>
+    <p *ngIf="task.content">{{ task.content }}</p>
+  </mat-card-content>
+
+  <div *ngIf="displayImageUrl" class="task-image-container" (click)="showImagePreview($event)">
+    <img [src]="displayImageUrl" alt="タスク画像" class="task-image">
+    <div class="image-overlay">
+      <mat-icon>zoom_in</mat-icon>
+    </div>
+  </div>
+
+  <mat-card-actions *ngIf="showActions">
+    <p *ngIf="task.priority" class="priority-label">優先度: {{ getPriorityLabel(task.priority) }}</p>
+    <div class="action-icons">
+      <!-- homeページ用-->
+      <button mat-icon-button (click)="archiveTask($event, task)" *ngIf="mode === 'home' || mode === 'tag'" matTooltip="アーカイブに移動">
+        <mat-icon>archive</mat-icon>
+      </button>
+
+      <!-- archiveページ用-->
+      <button mat-icon-button (click)="unarchiveTask($event)" *ngIf="mode === 'archive'" matTooltip="アーカイブから復元">
+        <mat-icon>unarchive</mat-icon>
+      </button>
+
+      <!-- homeページ,archiveページ,タグページ用-->
+      <button mat-icon-button (click)="deleteTask($event, task)" *ngIf="mode === 'home' || mode === 'archive' || mode === 'tag'" matTooltip="タスクを削除">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <!-- trashページ用-->
+      <button mat-icon-button (click)="restoreTask($event)" *ngIf="mode === 'trash'" matTooltip="タスクを復元">
+        <mat-icon>restore</mat-icon>
+      </button>
+
+      <button mat-icon-button (click)="permanentlyDeleteTask($event)" *ngIf="mode === 'trash'" matTooltip="タスクを完全に削除">
+        <mat-icon>delete_forever</mat-icon>
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>
+

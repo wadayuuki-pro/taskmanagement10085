@@ -1,0 +1,103 @@
+<div class="container">
+  <div class="header">
+  <h1 class="page-title">
+    <mat-icon>label</mat-icon>
+    「{{ tagName }}」のタスク一覧
+  </h1>
+    <div class="header-actions">
+      <button class="chart-button" (click)="showGanttChart()" matTooltip="ガントチャートを表示">
+        <mat-icon>timeline</mat-icon>
+      </button>
+      <button class="add-button" (click)="addTask()">
+        <mat-icon>add</mat-icon>
+        <span>タスクを追加</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="main-content">
+      <!-- タスク検索欄をここに移動 -->
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label for="tag-search-input">タスクを検索</mat-label>
+      <input matInput id="tag-search-input" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="タグ、タイトル、内容で検索">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+      <!-- 担当者（アサイン）セクション -->
+      <div class="assign-section">
+        <div class="assign-header-row">
+          <h3>担当者</h3>
+          <div *ngIf="currentUser && currentUser.email" class="current-user-info">
+            <mat-icon>person</mat-icon>
+            <span>あなた（{{ currentUser.email }}）は自動的にアサインされています</span>
+          </div>
+          <button mat-icon-button color="primary" (click)="openAssignDialog()" matTooltip="担当者を追加">
+            <mat-icon>person_add</mat-icon>
+          </button>
+        </div>
+        <ul class="assigned-users-list">
+          <li *ngFor="let user of assignedUsers; let i = index">
+            <span>{{ user.email }}</span>
+            <button mat-icon-button color="warn" (click)="removeUser(i)" matTooltip="担当者を外す">
+              <mat-icon>close</mat-icon>
+            </button>
+          </li>
+          <li *ngIf="assignedUsers.length === 0" class="no-user">未アサイン</li>
+        </ul>
+      </div>
+
+      <!-- アサインダイアログ -->
+      <div class="assign-dialog-overlay" *ngIf="showAssignDialog">
+        <div class="assign-dialog">
+          <div class="dialog-header">
+            <h3>担当者を追加</h3>
+            <button mat-icon-button (click)="closeAssignDialog()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="dialog-content">
+            <mat-form-field appearance="outline" class="assign-input">
+              <mat-label>メールアドレス</mat-label>
+              <input matInput [(ngModel)]="newUserEmail" placeholder="user@example.com">
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="assignUser()" [disabled]="!newUserEmail">アサイン</button>
+          </div>
+        </div>
+      </div>
+
+  <div class="task-list-tag">
+        <ng-container *ngIf="filteredTasks.length > 0; else noTasks">
+      <app-task-card 
+        *ngFor="let task of filteredTasks" 
+        [task]="task" 
+            [mode]="'tag'" 
+        [showActions]="true"
+            [assignedUsers]="assignedUsers"
+            (edit)="editTask($event)"
+            (delete)="onDeleteTask($event.id)"
+            (archive)="onArchiveTask($event.id)">
+      </app-task-card>
+        </ng-container>
+    <ng-template #noTasks>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">label_off</mat-icon>
+        <h2>タスクがありません</h2>
+        <p>このタグに関連付けられたタスクはまだありません。</p>
+        <p class="hint">新しいタスクを作成してください</p>
+            <button class="add-button" (click)="addTask()">
+              <mat-icon>add</mat-icon>
+              <span>タスクを追加</span>
+            </button>
+      </div>
+    </ng-template>
+      </div>
+    </div>
+
+    <div class="comment-section-wrapper">
+      <app-comment-section [tagId]="tagId"></app-comment-section>
+    </div>
+  </div>
+</div>

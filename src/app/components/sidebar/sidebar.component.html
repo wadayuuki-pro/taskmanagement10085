@@ -1,0 +1,94 @@
+<div class="sidebar">
+    <div class="resizer"></div> <!-- ⭐ これを sidebar直下に置く！！ -->
+  
+    <mat-nav-list>
+      <!-- ネットワークステータス -->
+      <app-network-status></app-network-status>
+  
+      <!-- ユーザー情報セクション -->
+      <div class="user-profile-section" *ngIf="currentUser">
+        <div class="user-profile-header">
+          <img [src]="userProfile.photoURL || 'assets/default-avatar.png'" alt="プロフィール画像" class="user-avatar">
+          <div class="user-info">
+            <div *ngIf="!isEditingName">
+              <div class="user-name">{{ userProfile.displayName || '名前未設定' }}</div>
+              <div class="user-email">{{ userProfile.email }}</div>
+              <button *ngIf="!isGoogleUser" mat-button class="edit-name-button" (click)="startEditingName()">
+                <mat-icon>edit</mat-icon>
+                名前を編集
+              </button>
+            </div>
+            <div *ngIf="isEditingName" class="edit-name-form">
+              <mat-form-field appearance="outline">
+                <mat-label for="display-name-input">表示名</mat-label>
+                <input matInput id="display-name-input" [(ngModel)]="newDisplayName" placeholder="表示名を入力">
+              </mat-form-field>
+              <div class="edit-actions">
+                <button mat-button color="primary" (click)="saveDisplayName()">保存</button>
+                <button mat-button (click)="cancelEditingName()">キャンセル</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- トップメニューセクション -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">メインメニュー</div>
+        <a mat-list-item class="custom-list-item"
+           *ngFor="let item of topMenuItems"
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }">
+          <mat-icon matListIcon>{{item.icon}}</mat-icon>
+          <span matLine>{{ item.label }}</span>
+        </a>
+      </div>
+  
+      <!-- タグセクション -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">タグ</div>
+        <ng-container *ngIf="tags$ | async as tags">
+          <div *ngFor="let tag of tags" class="tag-item">
+              <a mat-list-item 
+                 class="custom-list-item-user-tag"
+                 [routerLink]="tag.name ? ['/tag', tag.name] : null"
+                 routerLinkActive="active"
+                 (contextmenu)="onContextMenu($event, tag)">
+                <mat-icon matListIcon>label</mat-icon>
+                <span matLine>{{ tag.name || '未設定' }}</span>
+              </a>
+            </div> 
+        </ng-container>
+      </div>
+  
+      <!-- コンテキストメニュー -->
+      <div *ngIf="contextMenuVisible" class="context-menu"
+      [style.top.px]="contextMenuPosition.y" 
+      [style.left.px]="contextMenuPosition.x" >
+        <button mat-raised-button color="warn" class="delete-button" (click)="deleteTag()">
+          <mat-icon>delete</mat-icon>
+          削除
+        </button>
+      </div>
+  
+      <!-- ボトムメニューセクション -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">その他</div>
+        <a mat-list-item class="custom-list-item"
+           *ngFor="let item of bottomMenuItems"
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }">
+          <mat-icon matListIcon>{{item.icon}}</mat-icon>
+          <span matLine>{{ item.label }}</span>
+        </a>
+  
+        <a mat-list-item class="custom-list-item" (click)="logout()">
+          <mat-icon matListIcon>logout</mat-icon>
+          <span matLine>ログアウト</span>
+        </a>
+      </div>
+    </mat-nav-list>
+  </div>
+  

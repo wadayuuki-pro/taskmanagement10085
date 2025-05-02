@@ -1,0 +1,35 @@
+<div class="form-wrapper">
+    <form (ngSubmit)="onSignIn()">
+        <label for="email-input">メールアドレス:</label>
+        <input type="email" id="email-input" [(ngModel)]="email" name="email" placeholder="メールアドレス" required email/>
+    
+    <label for="password-input">パスワード:</label>
+    <div class="password-container">    
+    <input [type]="passwordVisible ? 'text' : 'password'" id="password-input" [(ngModel)]="password" name="password" placeholder="パスワード" required minlength="6"/>
+    <button type="button" class="eye-button"(click)="togglePasswordVisibility()">
+        {{passwordVisible ? '非表示' : '表示'}}
+    </button>
+    </div>
+    
+    <button type="submit">ログイン</button>
+
+    <div class="divider">
+        <span>または</span>
+    </div>
+
+    <button type="button" 
+            class="google-login-button" 
+            (click)="signInWithGoogle()">
+        <mat-icon>google</mat-icon>
+        Googleでログイン
+    </button>
+
+    <p>新規登録は<a routerLink="/sign-up">こちら</a></p>
+</form>
+
+
+<div *ngIf="errorMessage" class="error-message">
+    {{errorMessage}}
+</div>
+
+</div>

@@ -1,0 +1,55 @@
+<div class="gantt-container">
+  <div class="gantt-header">
+    <h3 class="gantt-title">「{{tagName}}」のガントチャート</h3>
+    <div class="gantt-legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #f44336;"></div>
+        <span>高優先度</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #ff9800;"></div>
+        <span>中優先度</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: #4caf50;"></div>
+        <span>低優先度</span>
+      </div>
+    </div>
+    <button mat-icon-button class="close-button" (click)="closeGantt()" matTooltip="閉じる">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="gantt-timeline">
+    <div class="timeline-header">
+      <div class="task-label">タスク</div>
+      <div class="timeline-dates">
+        <div class="date-marker" *ngFor="let date of getDateMarkers()">
+          {{ formatDate(date) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="gantt-body">
+      <div class="gantt-row" *ngFor="let task of ganttData">
+        <div class="task-label">{{ task.title }}</div>
+        <div class="timeline-bar">
+          <div class="task-bar" 
+               [style.left.%]="getDatePosition(task.start)" 
+               [style.width.%]="getTaskWidth(task.start, task.end)"
+               [style.backgroundColor]="getPriorityColor(task.priority)"
+               [matTooltip]="getTaskTooltip(task)">
+            <div class="progress-bar" [style.width.%]="task.progress"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gantt-footer">
+    <div class="empty-message" *ngIf="ganttData.length === 0">
+      <mat-icon>timeline</mat-icon>
+      <p>表示できるタスクがありません。開始日と締切日が設定されたタスクを追加してください。</p>
+    </div>
+  </div>
+</div> 
