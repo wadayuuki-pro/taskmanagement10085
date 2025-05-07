@@ -193,13 +193,12 @@ export class TaskCardComponent implements OnInit {
   }
 
   archiveTask(event: MouseEvent, task: Task) {
-    event.stopPropagation(); // イベントの伝播を止める
-    // アーカイブ処理を追加
+    event.stopPropagation();
     this.archive.emit(task);
   }
 
   deleteTask(event: MouseEvent, task: Task) {
-    event.stopPropagation(); 
+    event.stopPropagation();
     this.delete.emit(task);
   }
 
@@ -266,7 +265,7 @@ export class TaskCardComponent implements OnInit {
 
   // 位置情報を表示用にフォーマット
   getLocationDisplay(location: any): string {
-    if (!location) return '';
+    if (!location || (!location.address && (!location.lat || !location.lng))) return '';
     
     // 住所がある場合は住所を表示
     if (location.address) {
@@ -279,7 +278,7 @@ export class TaskCardComponent implements OnInit {
 
   // 位置情報のツールチップを取得
   getLocationTooltip(location: any): string {
-    if (!location) return '';
+    if (!location || (!location.address && (!location.lat || !location.lng))) return '';
     
     // 住所がある場合は住所を表示
     if (location.address) {
