@@ -32,10 +32,7 @@
     <div class="selected-assignees" *ngIf="selectedAssignedUsers.length > 0">
       <div class="selected-assignee-badge" *ngFor="let email of selectedAssignedUsers">
         <mat-icon>person</mat-icon>
-        <div class="assignee-info">
           <span class="assignee-name">{{ getSelectedAssigneeDisplayName(email) }}</span>
-          <span class="assignee-email">{{ email }}</span>
-        </div>
       </div>
     </div>
   </div>
@@ -44,28 +41,6 @@
     <mat-label for="task-content-input">内容を追加</mat-label>
     <textarea matInput id="task-content-input" [(ngModel)]="content" placeholder="内容を追加" rows="2"></textarea>
   </mat-form-field>
-
-  <div class="image-upload-section">
-    <div class="image-preview" *ngIf="imagePreview || imageUrl">
-      <img [src]="imagePreview || imageUrl" alt="タスク画像" />
-      <button mat-icon-button class="remove-image" (click)="removeImage()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-    <div class="image-upload-button">
-      <input type="file" 
-             accept="image/*" 
-             (change)="onImageSelected($event)" 
-             style="display: none" 
-             #fileInput>
-      <button mat-stroked-button 
-              (click)="fileInput.click()"
-              [disabled]="!!imagePreview || !!imageUrl">
-        <mat-icon>add_photo_alternate</mat-icon>
-        画像を添付
-      </button>
-    </div>
-  </div>
 
   <div class="status-buttons">
     <button mat-button [class.active]="status === '未着手'" (click)="setStatus('未着手')">
@@ -85,14 +60,14 @@
   <div class="date-time-priority-row">
     <div class="date-fields">
       <div class="start-date-priority-row">
-    <div class="date-field">
-      <mat-form-field appearance="outline">
-        <mat-label for="start-date-input">開始日</mat-label>
-        <input matInput id="start-date-input" [matDatepicker]="startPicker" [(ngModel)]="startDate">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
-    </div>
+        <div class="date-field">
+          <mat-form-field appearance="outline">
+            <mat-label for="start-date-input">開始日</mat-label>
+            <input matInput id="start-date-input" [matDatepicker]="startPicker" [(ngModel)]="startDate" (ngModelChange)="onDateChange()">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
 
         <mat-form-field appearance="outline" class="priority-field">
           <mat-label for="priority-select">優先度</mat-label>
@@ -105,43 +80,46 @@
       </div>
 
       <div class="due-date-time-row">
-    <div class="date-field">
-      <mat-form-field appearance="outline">
-        <mat-label for="due-date-input">締切日</mat-label>
-        <input matInput id="due-date-input" [matDatepicker]="duePicker" [(ngModel)]="dueDate">
-        <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
-        <mat-datepicker #duePicker></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <div class="time-select">
-      <mat-form-field appearance="outline">
-        <mat-label for="hour-select">時</mat-label>
-        <mat-select id="hour-select" [(ngModel)]="selectedHour">
-          <mat-option *ngFor="let hour of hours" [value]="hour">
-            {{hour}}時
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label for="minute-select">分</mat-label>
-        <mat-select id="minute-select" [(ngModel)]="selectedMinute">
-          <mat-option *ngFor="let minute of minutes" [value]="minute">
-            {{minute}}分
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+        <div class="date-field">
+          <mat-form-field appearance="outline">
+            <mat-label for="due-date-input">締切日</mat-label>
+            <input matInput id="due-date-input" [matDatepicker]="duePicker" [(ngModel)]="dueDate" (ngModelChange)="onDateChange()">
+            <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
+            <mat-datepicker #duePicker></mat-datepicker>
+            <mat-error *ngIf="dateError">{{ dateError }}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="time-select">
+          <mat-form-field appearance="outline">
+            <mat-label for="hour-select">時</mat-label>
+            <mat-select id="hour-select" [(ngModel)]="selectedHour">
+              <mat-option *ngFor="let hour of hours" [value]="hour">
+                {{hour}}時
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label for="minute-select">分</mat-label>
+            <mat-select id="minute-select" [(ngModel)]="selectedMinute">
+              <mat-option *ngFor="let minute of minutes" [value]="minute">
+                {{minute}}分
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- 場所入力セクション -->
   <div class="location-section">
-    <h3>位置情報</h3>
-    <app-location-picker
-      [location]="location"
-      (locationChange)="onLocationChange($event)"
-      class="full-width">
-    </app-location-picker>
+    <h3>場所</h3>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label for="location-input">場所を入力</mat-label>
+      <input matInput id="location-input" [(ngModel)]="address" placeholder="例：東京都渋谷区">
+      <mat-icon matSuffix>location_on</mat-icon>
+      <mat-error *ngIf="!address">場所を入力してください</mat-error>
+    </mat-form-field>
   </div>
 
   <div class="task-actions">

@@ -17,13 +17,15 @@ import { GoogleAuthService } from '../../services/google-auth.service';
 import { TaskService } from '../../services/task.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
-import { LocationPickerComponent } from '../location-picker/location-picker.component';
 import { Timestamp } from '@angular/fire/firestore';
 import { TagService } from '../../services/tag.service';
 import { AuthService } from '../../auth.service';
 import { User } from '@angular/fire/auth';
 import { firstValueFrom } from 'rxjs';
 import { Tag } from '../../pages/tags/tag.service';
+import { MatError } from '@angular/material/form-field';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface Task {
   id?: string;
@@ -35,13 +37,13 @@ interface Task {
   status: '未着手' | '進行中' | '完了';
   createdAt: Date;
   imageUrl?: string;
+  assignedUser?: string;
+  showAssigneeSection?: boolean;
   location?: {
     lat: number;
     lng: number;
     address?: string;
-  } | null;
-  assignedUser?: string;
-  showAssigneeSection?: boolean;
+  };
 }
 
 export const TASK_DATA = new InjectionToken<Task>('TASK_DATA');
@@ -59,7 +61,8 @@ export const TASK_DATA = new InjectionToken<Task>('TASK_DATA');
     MatNativeDateModule,
     MatSelectModule,
     MatIconModule,
-    LocationPickerComponent
+    MatSnackBarModule,
+    MatError
   ],
   templateUrl: './task-input.component.html',
   styleUrls: ['./task-input.component.css'],
@@ -87,11 +90,12 @@ export class TaskInputComponent implements OnInit {
   selectedImage: File | null = null;
   imagePreview: string | null = null;
   imageUrl: string | null = null;
-  location: { lat: number; lng: number; address?: string } | null = null;
   imageFile: File | null = null;
   public assignedUser: string = '';
   public selectedAssignedUsers: string[] = [];
   public isEditMode: boolean = false;
+  dateError: string | null = null;
+  address: string = '';
 
   private firestore = inject(Firestore);
   private taskService = inject(TaskService);
@@ -101,6 +105,7 @@ export class TaskInputComponent implements OnInit {
   private overlayService = inject(OverlayService);
   private tagService = inject(TagService);
   private authService = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
 
   constructor(
     @Optional() @Inject(TASK_DATA) public injectedTaskData: any
@@ -139,6 +144,11 @@ export class TaskInputComponent implements OnInit {
       this.content = this.injectedTaskData.content || '';
       this.isTagPage = this.injectedTaskData.isTagPage || false;
       
+      // locationデータの読み込み
+      if (this.injectedTaskData.location) {
+        this.address = this.injectedTaskData.location.address || '';
+      }
+      
       // FirestoreのTimestamp型をDate型に変換
       if (this.injectedTaskData.startDate && this.injectedTaskData.startDate.toDate) {
         this.startDate = this.injectedTaskData.startDate.toDate();
@@ -149,22 +159,31 @@ export class TaskInputComponent implements OnInit {
       }
       
       if (this.injectedTaskData.dueDate && this.injectedTaskData.dueDate.toDate) {
-        this.dueDate = this.injectedTaskData.dueDate.toDate();
+        const dueDate = this.injectedTaskData.dueDate.toDate();
+        this.dueDate = dueDate;
+        this.selectedHour = dueDate.getHours();
+        this.selectedMinute = dueDate.getMinutes();
       } else if (this.injectedTaskData.dueDate) {
-        this.dueDate = new Date(this.injectedTaskData.dueDate);
+        const dueDate = new Date(this.injectedTaskData.dueDate);
+        this.dueDate = dueDate;
+        this.selectedHour = dueDate.getHours();
+        this.selectedMinute = dueDate.getMinutes();
       } else {
         this.dueDate = null;
+        this.selectedHour = 0;
+        this.selectedMinute = 0;
       }
       
       this.priority = this.injectedTaskData.priority || 'medium';
       this.status = this.injectedTaskData.status || '未着手';
       this.tagNames = this.injectedTaskData.tag || '';
       
-      // 画像URLの処理を修正
+      // 画像URLの処理を改善
       if (this.injectedTaskData.imageUrl) {
         const fileId = this.extractFileId(this.injectedTaskData.imageUrl);
         if (fileId) {
-          this.imageUrl = `https://drive.google.com/uc?id=${fileId}`;
+          // Google Driveの画像URLを直接表示用に変換
+          this.imageUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
         } else {
           this.imageUrl = this.injectedTaskData.imageUrl;
         }
@@ -172,27 +191,26 @@ export class TaskInputComponent implements OnInit {
         this.imageUrl = null;
       }
       
-      this.location = this.injectedTaskData.location || null;
-      
       // 担当者セクションの表示制御を修正
-      if (this.isTagPage) {
-        // タグページの場合：編集時のみ担当者セクションを表示
-        if (this.injectedTaskData.assignedUsers && this.injectedTaskData.assignedUsers.length > 0) {
-          this.showAssigneeSection = true;
-          if (Array.isArray(this.injectedTaskData.assignedUsers)) {
-            this.selectedAssignedUsers = this.injectedTaskData.assignedUsers.map((user: { email: string; displayName: string }) => user.email);
-            this.assignedUsers = this.injectedTaskData.assignedUsers;
-          } else {
-            const users = Object.values(this.injectedTaskData.assignedUsers) as { email: string; displayName: string }[];
-            this.selectedAssignedUsers = users.map(user => user.email);
-            this.assignedUsers = users;
-          }
+      if (this.injectedTaskData.assignedUsers && this.injectedTaskData.assignedUsers.length > 0) {
+        this.showAssigneeSection = true;
+        if (Array.isArray(this.injectedTaskData.assignedUsers)) {
+          this.selectedAssignedUsers = this.injectedTaskData.assignedUsers.map((user: { email: string; displayName: string }) => user.email);
+          this.assignedUsers = this.injectedTaskData.assignedUsers;
         } else {
-          this.showAssigneeSection = false;
+          const users = Object.values(this.injectedTaskData.assignedUsers) as { email: string; displayName: string }[];
+          this.selectedAssignedUsers = users.map(user => user.email);
+          this.assignedUsers = users;
         }
       } else {
-        // ホームページの場合：担当者セクションを非表示
-        this.showAssigneeSection = false;
+        this.showAssigneeSection = true;
+        if (this.currentUser) {
+          this.assignedUsers = [{
+            email: this.currentUser.email || '',
+            displayName: this.currentUser.displayName || this.currentUser.email || ''
+          }];
+          this.selectedAssignedUsers = [this.currentUser.email || ''];
+        }
       }
       
       console.log('TaskInputComponent: 処理後のデータ', {
@@ -215,12 +233,19 @@ export class TaskInputComponent implements OnInit {
       }
     } else {
       // 新規作成時の処理
-      this.showAssigneeSection = this.isTagPage;
+      this.showAssigneeSection = true;
       if (this.isTagPage) {
         // タグページからの新規作成時は担当者セクションを表示
         this.loadAssignedUsers();
         // 新規作成時は担当者を選択していない状態にする
         this.selectedAssignedUsers = [];
+      } else if (this.currentUser) {
+        // ホームページからの新規作成時はログインユーザーを自動的に担当者として設定
+        this.assignedUsers = [{
+          email: this.currentUser.email || '',
+          displayName: this.currentUser.displayName || this.currentUser.email || ''
+        }];
+        this.selectedAssignedUsers = [this.currentUser.email || ''];
       }
     }
   }
@@ -243,15 +268,36 @@ export class TaskInputComponent implements OnInit {
       if (!tagSnapshot.empty) {
         const data = tagSnapshot.docs[0].data();
         const users = data['assignedUsers'] || [];
+        const userIds = data['assignedUserIds'] || [];
         console.log('取得した担当者:', users);
         
+        // ユーザー情報を正しく設定
+        const updatedUsers = await Promise.all(users.map(async (user: { email: string; displayName: string }) => {
+          // ユーザーのdisplayNameが設定されていない場合、Firestoreから取得
+          if (!user.displayName || user.displayName === 'ユーザー') {
+            // メールアドレスでユーザーを検索
+            const usersCollectionRef = collection(this.firestore, 'users');
+            const userQuery = query(usersCollectionRef, where('email', '==', user.email));
+            const userSnapshot = await getDocs(userQuery);
+            
+            if (!userSnapshot.empty) {
+              const userData = userSnapshot.docs[0].data();
+              return {
+                email: user.email,
+                displayName: userData['displayName'] || user.email
+              };
+            }
+          }
+          return user;
+        }));
+
         if (this.isEditMode) {
           // 編集時は既存の担当者情報を保持
-          this.assignedUsers = users;
+          this.assignedUsers = updatedUsers;
           console.log('編集モード: 担当者を設定', this.assignedUsers);
         } else {
           // 新規作成時は担当者リストのみを設定（選択はしない）
-          this.assignedUsers = users;
+          this.assignedUsers = updatedUsers;
           this.selectedAssignedUsers = [];
           console.log('新規作成モード: 担当者リストを設定', this.assignedUsers);
         }
@@ -282,6 +328,8 @@ export class TaskInputComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagePreview = e.target?.result as string;
+        // 新しい画像が選択されたら、既存の画像URLをクリア
+        this.imageUrl = null;
       };
       reader.readAsDataURL(file);
     }
@@ -330,12 +378,17 @@ export class TaskInputComponent implements OnInit {
     }
   }
 
-  onLocationChange(location: { lat: number; lng: number; address?: string } | null) {
-    this.location = location;
-    console.log('Location updated:', location);
-  }
-
   async saveTask() {
+    if (!this.validateDates()) {
+      this.snackBar.open('締切日は開始日以降の日付を選択してください', '閉じる', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
     try {
       if (!this.currentUser) {
         console.error('ユーザーが認証されていません');
@@ -394,24 +447,36 @@ export class TaskInputComponent implements OnInit {
         finalImageUrl = null;
       }
 
+      // 締め切り日時を設定
+      let finalDueDate = null;
+      if (this.dueDate) {
+        const dueDate = new Date(this.dueDate);
+        dueDate.setHours(this.selectedHour, this.selectedMinute, 0, 0);
+        finalDueDate = dueDate;
+      }
+
       const taskData = {
         title: this.title,
         content: this.content,
         startDate: this.startDate ? Timestamp.fromDate(this.startDate) : null,
-        dueDate: this.dueDate ? Timestamp.fromDate(this.dueDate) : null,
+        dueDate: finalDueDate ? Timestamp.fromDate(finalDueDate) : null,
         priority: this.priority,
         status: this.status,
         tag: this.tagNames,
         createdAt: this.id ? (this.injectedTaskData.createdAt || Timestamp.now()) : Timestamp.now(),
         updatedAt: Timestamp.now(),
         ownerId: this.currentUser.uid,
-        location: this.location,
         imageUrl: finalImageUrl,
         assignedUsers: this.selectedAssignedUsers.map(email => ({
           email: email,
           displayName: this.getSelectedAssigneeDisplayName(email)
         })),
-        showAssigneeSection: this.showAssigneeSection
+        showAssigneeSection: this.showAssigneeSection,
+        location: {
+          lat: 0,
+          lng: 0,
+          address: this.address
+        }
       };
 
       if (this.id) {
@@ -427,6 +492,12 @@ export class TaskInputComponent implements OnInit {
       this.overlayService.close();
     } catch (error) {
       console.error('タスクの保存中にエラーが発生しました:', error);
+      this.snackBar.open('タスクの保存に失敗しました', '閉じる', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
     }
   }
 
@@ -471,5 +542,27 @@ export class TaskInputComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  validateDates(): boolean {
+    if (this.startDate && this.dueDate) {
+      const start = new Date(this.startDate);
+      const due = new Date(this.dueDate);
+      
+      // 時間を0にリセットして日付のみを比較
+      start.setHours(0, 0, 0, 0);
+      due.setHours(0, 0, 0, 0);
+      
+      if (due < start) {
+        this.dateError = '締切日は開始日以降の日付を選択してください';
+        return false;
+      }
+    }
+    this.dateError = null;
+    return true;
+  }
+
+  onDateChange() {
+    this.validateDates();
   }
 }
