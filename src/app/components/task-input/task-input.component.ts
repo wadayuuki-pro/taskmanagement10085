@@ -62,7 +62,8 @@ export const TASK_DATA = new InjectionToken<Task>('TASK_DATA');
     MatSelectModule,
     MatIconModule,
     MatSnackBarModule,
-    MatError
+    MatError,
+    OverlayModule
   ],
   templateUrl: './task-input.component.html',
   styleUrls: ['./task-input.component.css'],
@@ -96,6 +97,7 @@ export class TaskInputComponent implements OnInit {
   public isEditMode: boolean = false;
   dateError: string | null = null;
   address: string = '';
+  showLocationSection: boolean = true;
 
   private firestore = inject(Firestore);
   private taskService = inject(TaskService);
@@ -248,6 +250,9 @@ export class TaskInputComponent implements OnInit {
         this.selectedAssignedUsers = [this.currentUser.email || ''];
       }
     }
+
+    // 場所入力セクションの表示設定
+    this.showLocationSection = true;
   }
 
   // プロジェクトにアサインされているユーザーを取得するメソッドを追加

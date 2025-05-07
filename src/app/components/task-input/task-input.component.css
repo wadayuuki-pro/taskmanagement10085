@@ -310,6 +310,7 @@ button.mat-stroked-button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 .location-section h3 {
@@ -321,10 +322,22 @@ button.mat-stroked-button {
 
 .location-section mat-form-field {
   width: 100%;
+  display: block;
 }
 
 .location-section mat-icon {
   color: rgba(0, 0, 0, 0.54);
+  margin-right: 8px;
+}
+
+::ng-deep .location-section .mat-form-field-wrapper {
+  margin: 0;
+  padding-bottom: 0.5em;
+}
+
+::ng-deep .location-section .mat-form-field-flex {
+  margin-top: 0;
+  padding: 0 8px;
 }
 
 .task-actions button {
